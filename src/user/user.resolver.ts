@@ -10,9 +10,6 @@ export class UserResolver {
     private userService: UserService,
   ) { }
   
-  /* Example Usage
-  * {"userWhereUniqueInput": {"id": 1}} or {"userWhereUniqueInput": {"email": "pass@pass.com"}}
-  */
   @Query(returns => User)
   @UseGuards(JwtAuthGuard)
   async user(
@@ -22,17 +19,11 @@ export class UserResolver {
     return this.userService.findOne(userWhereUniqueInput);
   }
 
-  /* Example Usage
-  * {"userCreateInput": {"email": "pass@pass.com","password": "passwprd"}}
-  */
   @Mutation(returns => User)
   async createUser(@Args('userCreateInput', { type: () => UserCreateInput }) userCreateInput): Promise<User> {
     return this.userService.create(userCreateInput);
   }
 
-  /* Example Usage
-  * {"userWhereUniqueInput": {"id": 1}} or {"userWhereUniqueInput": {"email": "pass@pass.com"}}
-  */
   @Mutation(returns => User)
   async deleteUser(@Args('userWhereUniqueInput', { type: () => UserWhereUniqueInput }) userWhereUniqueInput): Promise<User> {
     return this.userService.delete(userWhereUniqueInput);
