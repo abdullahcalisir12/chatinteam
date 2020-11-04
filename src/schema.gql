@@ -36,8 +36,9 @@ input LoginInput {
 
 type Mutation {
   createCompany(companyCreateInput: CompanyCreateInput!): Company!
-  createUser(userCreateInput: UserCreateInput!): User!
+  createTeam(teamCreateInput: TeamCreateInput!): Team!
   deleteCompany(companyWhereUniqueInput: CompanyWhereUniqueInput!): DeleteResult!
+  deleteTeam(teamWhereUniqueInput: TeamWhereUniqueInput!): DeleteResult!
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
   login(loginInput: LoginInput!): Token!
   register(registerInput: RegisterInput!): Token!
@@ -45,6 +46,7 @@ type Mutation {
 
 type Query {
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
+  team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
 }
 
@@ -59,6 +61,15 @@ type Team {
   name: String!
 }
 
+input TeamCreateInput {
+  companyId: Int!
+  name: String!
+}
+
+input TeamWhereUniqueInput {
+  id: Int!
+}
+
 type Token {
   access_token: String!
 }
@@ -66,11 +77,6 @@ type Token {
 type User {
   email: String!
   id: Int!
-}
-
-input UserCreateInput {
-  email: String!
-  password: String!
 }
 
 input UserWhereUniqueInput {
