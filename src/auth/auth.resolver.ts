@@ -25,7 +25,8 @@ export class AuthResolver {
     const { email, password } = registerInput;
     const user = await this.authService.findUserByEmail(email);
     if (user) throw new ConflictException(`Email is already used.`);
-    const registeredUser = await this.userService.create({ email, password: this.authService.hashPassword(password) });
+    const hashedPassword = await this.authService.hashPassword(password);
+    const registeredUser = await this.userService.create({ email, password: hashedPassword });
     return this.authService.generateToken(registeredUser);
   }
 }

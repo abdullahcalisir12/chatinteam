@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Token } from './auth.graphql';
 import { hash, compare } from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
+import { Users } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
     private prismaService: PrismaService
   ) { }
 
-  findUserByEmail(email: string): Promise<User> {
+  findUserByEmail(email: string): Promise<Users> {
     return this.prismaService.users.findOne({
       where: { email },
     })
