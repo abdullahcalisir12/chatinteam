@@ -2,25 +2,61 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Company {
+  CompanyUsers: [User!]
+  creatorId: Int!
+  id: Int!
+  Invitations: [Invitation!]
+  name: String!
+  Teams: [Team!]
+}
+
+input CompanyCreateInput {
+  name: String!
+}
+
+input CompanyWhereUniqueInput {
+  id: Int
+}
+
+type DeleteResult {
+  id: Float!
+}
+
+type Invitation {
+  companyId: Float!
+  email: String!
+  status: String!
+}
+
 input LoginInput {
   email: String!
   password: String!
 }
 
 type Mutation {
+  createCompany(companyCreateInput: CompanyCreateInput!): Company!
   createUser(userCreateInput: UserCreateInput!): User!
+  deleteCompany(companyWhereUniqueInput: CompanyWhereUniqueInput!): DeleteResult!
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
   login(loginInput: LoginInput!): Token!
   register(registerInput: RegisterInput!): Token!
 }
 
 type Query {
+  company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
 }
 
 input RegisterInput {
   email: String!
   password: String!
+}
+
+type Team {
+  companyId: Int!
+  id: Int!
+  name: String!
 }
 
 type Token {
