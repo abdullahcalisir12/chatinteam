@@ -20,13 +20,36 @@ input CompanyWhereUniqueInput {
 }
 
 type DeleteResult {
-  id: Float!
+  id: Int!
 }
 
 type Invitation {
-  companyId: Float!
+  companyId: Int!
   email: String!
-  status: String!
+  status: InvitationTypes!
+}
+
+input InvitationCreateInput {
+  companyId: Int!
+  email: String!
+}
+
+enum InvitationTypes {
+  ACCEPTED
+  CANCELED
+  REJECTED
+  SENT
+}
+
+input InvitationUpdateInput {
+  companyId: Int!
+  email: String!
+  status: InvitationTypes!
+}
+
+input InvitationWhereUniqueInput {
+  companyId: Int
+  email: String
 }
 
 input LoginInput {
@@ -36,16 +59,19 @@ input LoginInput {
 
 type Mutation {
   createCompany(companyCreateInput: CompanyCreateInput!): Company!
+  createInvitation(invitationCreateInput: InvitationCreateInput!): Invitation!
   createTeam(teamCreateInput: TeamCreateInput!): Team!
   deleteCompany(companyWhereUniqueInput: CompanyWhereUniqueInput!): DeleteResult!
   deleteTeam(teamWhereUniqueInput: TeamWhereUniqueInput!): DeleteResult!
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
   login(loginInput: LoginInput!): Token!
   register(registerInput: RegisterInput!): Token!
+  updateInvitation(invitationUpdateInput: InvitationUpdateInput!): Invitation!
 }
 
 type Query {
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
+  invitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
   team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
 }
