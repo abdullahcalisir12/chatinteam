@@ -7,19 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  password String
-  email    String @unique
-}
-
 model Companies {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id           Int            @id @default(autoincrement())
+  name         String
+  creatorId    Int
+  Users        Users          @relation(fields: [creatorId], references: [id])
+  CompanyUsers CompanyUsers[]
+  Invitations  Invitations[]
+  Teams        Teams[]
 }
 
 model Users {
-  id       Int    @id @default(autoincrement())
-  password String
-  email    String @unique
+  id           Int            @id @default(autoincrement())
+  password     String
+  email        String         @unique
+  Companies    Companies[]
+  CompanyUsers CompanyUsers[]
+  TeamUsers    TeamUsers[]
+}
+
+model Teams {
+  id        Int         @id @default(autoincrement())
+  name      String
+  companyId Int
+  Companies Companies   @relation(fields: [companyId], references: [id])
+  TeamUsers TeamUsers[]
+}
+
+model Invitations {
+  status    String
+  email     String
+  companyId Int
+  Companies Companies @relation(fields: [companyId], references: [id])
+
+  @@unique([email, companyId], name: "Invitations_email_companyId_key")
+}
+
+model TeamUsers {
+  userId Int
+  teamId Int
+  Teams  Teams @relation(fields: [teamId], references: [id])
+  Users  Users @relation(fields: [userId], references: [id])
+
+  @@unique([userId, teamId], name: "TeamUsers_userId_teamId_key")
+}
+
+model CompanyUsers {
+  userId    Int
+  companyId Int
+  Companies Companies @relation(fields: [companyId], references: [id])
+  Users     Users     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, companyId], name: "CompanyUsers_userId_companyId_key")
 }
