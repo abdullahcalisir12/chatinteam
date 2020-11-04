@@ -8,13 +8,13 @@ export class UserService {
     private prisma: PrismaService
   ) {}
   async findOne(where: UserWhereUniqueInput): Promise<User> {
-    return this.prisma.users.findOne({ where })
+    return this.prisma.users.findOne({ where });
   }
 
   async create(userCreateData: UserCreateInput): Promise<User> {
     return this.prisma.users.create({
       data: userCreateData
-    })
+    });
   }
 
   async delete(where: UserWhereUniqueInput): Promise<User> {

@@ -1,7 +1,9 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User, UserWhereUniqueInput, UserCreateInput } from './user.graphql';
-
+import { UseGuards } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/currentUser.decorator';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @Resolver(of => User)
 export class UserResolver {
   constructor(
@@ -12,7 +14,11 @@ export class UserResolver {
   * {"userWhereUniqueInput": {"id": 1}} or {"userWhereUniqueInput": {"email": "pass@pass.com"}}
   */
   @Query(returns => User)
-  async user(@Args('userWhereUniqueInput', { type: () => UserWhereUniqueInput }) userWhereUniqueInput): Promise<User> {
+  @UseGuards(JwtAuthGuard)
+  async user(
+    @CurrentUser() currentUser,
+    @Args('userWhereUniqueInput', { type: () => UserWhereUniqueInput }) userWhereUniqueInput
+  ): Promise<User> {
     return this.userService.findOne(userWhereUniqueInput);
   }
 

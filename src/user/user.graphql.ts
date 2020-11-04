@@ -7,18 +7,15 @@ export class User {
 
   @Field()
   email: string;
-
-  @Field()
-  password: string;
 }
 
 @InputType()
 export class UserWhereUniqueInput {
   @Field(type => Int, { nullable: true })
-  id: number;
+  id?: number;
 
   @Field({ nullable: true })
-  email: string;
+  email?: string;
 }
 
 @InputType()

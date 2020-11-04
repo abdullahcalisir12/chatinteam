@@ -2,19 +2,34 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
   createUser(userCreateInput: UserCreateInput!): User!
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
+  login(loginInput: LoginInput!): Token!
+  register(registerInput: RegisterInput!): Token!
 }
 
 type Query {
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
 }
 
+input RegisterInput {
+  email: String!
+  password: String!
+}
+
+type Token {
+  access_token: String!
+}
+
 type User {
   email: String!
   id: Int!
-  password: String!
 }
 
 input UserCreateInput {
