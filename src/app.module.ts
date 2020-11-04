@@ -3,7 +3,10 @@ import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { CompanyModule } from './company/company.module';
 import { UserModule } from './user/user.module';
+import { InvitationModule } from './invitation/invitation.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -15,8 +18,11 @@ import { UserModule } from './user/user.module';
       sortSchema: true,
       context: ({ req }) => ({ req }),
     }),
+    CompanyModule,
     UserModule,
     AuthModule,
+    InvitationModule,
+    TeamModule,
   ],
   controllers: [],
   providers: [],
