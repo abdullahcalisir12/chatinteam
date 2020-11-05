@@ -1,8 +1,8 @@
 -- Drop ALL TABLE 
 
 -- DROP TABLE IF EXISTS "Invitation", "Team", "Company", "User";
-DROP TABLE IF EXISTS "TeamMember", "CompanyMember", "Invitation", "Team", "Company", "User" RESTRICT;
-
+-- DROP TABLE IF EXISTS "TeamMember", "CompanyMember", "Invitation", "Team", "Company", "User" RESTRICT;
+DROP TABLE IF EXISTS "TeamMember", "CompanyMember" RESTRICT;
 -- User --
 
 CREATE TABLE IF NOT EXISTS "User" (
@@ -39,16 +39,15 @@ CREATE TABLE IF NOT EXISTS "Invitation" (
 -- Company Members - User can be a member of many companies and company can have multiple members
 
 CREATE TABLE IF NOT EXISTS "CompanyMember" (
-  id SERIAL NOT NULL UNIQUE,
   user_id INT NOT NULL references "User" (id),
   company_id INT NOT NULL references "Company" (id),
-  CONSTRAINT company_member_id PRIMARY KEY (id, user_id, company_id)
+  CONSTRAINT company_member_id PRIMARY KEY (user_id, company_id)
 );
 
 -- Team Members - User can be a member of many team and team can have multiple members
 
 CREATE TABLE IF NOT EXISTS "TeamMember" (
+  user_id INT NOT NULL references "User" (id),
   team_id INT NOT NULL references "Team" (id),
-  company_member_id INT NOT NULL references "CompanyMember" (id),
-  CONSTRAINT team_member_id PRIMARY KEY (company_member_id, team_id)
+  CONSTRAINT team_member_id PRIMARY KEY (user_id, team_id)
 );

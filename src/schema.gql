@@ -5,7 +5,7 @@
 type Company {
   id: Int!
   invitations: [Invitation!]
-  members: User
+  members: [User!]
   name: String!
   owner: User
   teams: [Team!]
@@ -25,23 +25,23 @@ type DeleteResult {
 
 type Invitation {
   company: Company!
+  company_id: Int!
   email: String!
   status: String!
 }
 
 input InvitationCreateInput {
-  companyId: Int!
+  company_id: Int!
   email: String!
 }
 
 input InvitationUpdateInput {
-  companyId: Int!
+  company_id: Int!
   email: String!
-  status: String!
 }
 
 input InvitationWhereUniqueInput {
-  companyId: Int
+  company_id: Int
   email: String
 }
 
@@ -51,6 +51,8 @@ input LoginInput {
 }
 
 type Mutation {
+  acceptInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
+  cancelInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
   createCompany(companyCreateInput: CompanyCreateInput!): Company!
   createInvitation(invitationCreateInput: InvitationCreateInput!): Invitation!
   createTeam(teamCreateInput: TeamCreateInput!): Team!
@@ -59,15 +61,16 @@ type Mutation {
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
   login(loginInput: LoginInput!): Token!
   register(registerInput: RegisterInput!): Token!
-  updateInvitation(invitationUpdateInput: InvitationUpdateInput!): Invitation!
+  rejectInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
 }
 
 type Query {
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
-  invitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
+  companyInvitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
   me: User!
   team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
+  userInvitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
 }
 
 input RegisterInput {
@@ -83,7 +86,7 @@ type Team {
 }
 
 input TeamCreateInput {
-  companyId: Int!
+  company_id: Int!
   name: String!
 }
 
@@ -93,6 +96,11 @@ input TeamWhereUniqueInput {
 
 type Token {
   access_token: String!
+}
+
+type UpdateInvitation {
+  email: String!
+  status: String!
 }
 
 type User {

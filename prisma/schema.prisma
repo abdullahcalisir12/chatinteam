@@ -31,17 +31,16 @@ model User {
   email         String          @unique
   Company       Company[]
   CompanyMember CompanyMember[]
+  TeamMember    TeamMember[]
 }
 
 model CompanyMember {
-  id         Int          @unique @default(autoincrement())
   user_id    Int
   company_id Int
-  Company    Company      @relation(fields: [company_id], references: [id])
-  User       User         @relation(fields: [user_id], references: [id])
-  TeamMember TeamMember[]
+  Company    Company @relation(fields: [company_id], references: [id])
+  User       User    @relation(fields: [user_id], references: [id])
 
-  @@id([id, user_id, company_id])
+  @@id([user_id, company_id])
 }
 
 model Invitation {
@@ -54,10 +53,10 @@ model Invitation {
 }
 
 model TeamMember {
-  team_id           Int
-  company_member_id Int
-  CompanyMember     CompanyMember @relation(fields: [company_member_id], references: [id])
-  Team              Team          @relation(fields: [team_id], references: [id])
+  user_id Int
+  team_id Int
+  Team    Team @relation(fields: [team_id], references: [id])
+  User    User @relation(fields: [user_id], references: [id])
 
-  @@id([company_member_id, team_id])
+  @@id([user_id, team_id])
 }
