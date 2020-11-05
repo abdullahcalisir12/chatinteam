@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { InvitationTypes } from './invitation.enum';
-import { Invitation, InvitationCreateInput, InvitationUpdateInput, InvitationWhereUniqueInput } from './invitation.graphql';
+import { User } from 'src/user/user.graphql';
+import { Invitation, UpdateInvitation, InvitationCreateInput, InvitationUpdateInput, InvitationWhereUniqueInput } from './invitation.graphql';
 
 @Injectable()
 export class InvitationService {
@@ -9,6 +9,14 @@ export class InvitationService {
     private prisma: PrismaService
   ) { }
   
+  async findOne(where: InvitationWhereUniqueInput): Promise<Invitation> {
+    try {
+      return this.prisma.invitation.findOne({ where: { email_company_id: { email: where.email, company_id: where.company_id} } });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async findMany(where: InvitationWhereUniqueInput): Promise<Invitation[]> {
     try {
       return this.prisma.invitation.findMany({ where });
@@ -19,50 +27,75 @@ export class InvitationService {
 
   async create(invitationCreateData: InvitationCreateInput): Promise<Invitation> {
     try {
-      const invitation = await this.prisma.invitation.findOne({
-        where: { email_company_id: { email: invitationCreateData.email, company_id: invitationCreateData.companyId } }
-      });
-      if (invitation.status === 'SENT') throw new Error('There is already an invitation');
-      if (invitation.status === 'ACCEPTED') throw new Error('The user who is using this email address is already a team member');
-
-      if (invitation && invitation.status === 'REJECTED' || invitation.status === 'CANCELED') {
-        this.update({ ...invitationCreateData, status: 'SENT' });
-      }
-
-      if (!invitation) {
         const createdInvitation = await this.prisma.invitation.create({
           data: {
             email: invitationCreateData.email,
-            status: String(InvitationTypes.SENT),
+            status: 'SENT',
             Company: {
               connect: {
-                id: invitationCreateData.companyId
+                id: invitationCreateData.company_id
               }
             }
           }
         });
         if (!createdInvitation) throw new Error('Failed to create invitation');
         return createdInvitation;
-      }
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async update(invitationUpdateData: InvitationUpdateInput): Promise<Invitation>{
+  async accept(invitationUpdateData: InvitationUpdateInput, user: User): Promise<Invitation> {
     try {
-      const invitation = await this.prisma.invitation.findOne({
-        where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.companyId } }
-      });
+      const invitation = await this.findOne({ email: invitationUpdateData.email, company_id: invitationUpdateData.company_id });
       if (!invitation) throw new Error('Invitation Not Found');
-      const updatedInvitation = await this.prisma.invitation.update({
-        where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.companyId } },
+      if (invitation.email !== user.email) throw new Error('Unauthorizated');
+      const result = await this.prisma.companyMember.create({
         data: {
-          status: String(invitationUpdateData.status)
+          User: { connect: { id: user.id } },
+          Company: { connect: { id: invitationUpdateData.company_id } }
         }
       });
-      if (!updatedInvitation) throw new Error('Failed to create invitation');
-      return updatedInvitation;
+      if (!result) throw new Error('Failed to accept invitation')
+      const updatedInvitation = await this.prisma.invitation.delete({
+        where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.company_id } }
+      });
+      return { ...updatedInvitation, status: 'ACCEPTED' };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async reject(invitationUpdateData: InvitationUpdateInput, user: User): Promise<Invitation> {
+    try {
+        const invitation = await this.findOne({ email: invitationUpdateData.email, company_id: invitationUpdateData.company_id });
+        if (!invitation) throw new Error('Invitation Not Found');
+        if (invitation.email !== user.email) throw new Error('Unauthorizated');
+        const rejectedInvitation = await this.prisma.invitation.update({
+          where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.company_id } },
+          data: {
+            status: 'REJECT',
+            email: invitationUpdateData.email
+          }
+        })
+        if (!rejectedInvitation) throw new Error('Failed to reject invitation');
+        return rejectedInvitation;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async cancel(invitationUpdateData: InvitationUpdateInput, user: User): Promise<Invitation> {
+    try {
+        const canceledInvitations = await this.prisma.invitation.update({
+          where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.company_id } },
+          data: {
+            status: 'CANCELED',
+            email: invitationUpdateData.email
+          }
+        })
+        if (!canceledInvitations) throw new Error('Failed to reject invitation');
+        return canceledInvitations;
     } catch (error) {
       throw new Error(error);
     }
