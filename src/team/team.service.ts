@@ -13,13 +13,13 @@ export class TeamService {
   }
 
   async create(teamCreateData: TeamCreateInput): Promise<Team> {
-    const { companyId, ...teamData } = teamCreateData
+    const { company_id, ...teamData } = teamCreateData
     return this.prisma.team.create({
       data: {
         ...teamData,
         Company: {
           connect: {
-            id: companyId
+            id: company_id
           }
         }
       }

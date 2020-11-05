@@ -10,11 +10,11 @@ export class Team {
   @Field()
   name: string;
 
-  @Field(type => Int)
+  @Field(type => Company)
   company?: Company;
 
   @Field(type => [User], { nullable: true })
-  users?: User[];
+  members?: User[];
 }
 
 @InputType()
@@ -29,5 +29,5 @@ export class TeamCreateInput {
   name: string;
 
   @Field(type => Int)
-  companyId: number;
+  company_id: number;
 }
