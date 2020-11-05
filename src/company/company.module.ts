@@ -6,6 +6,6 @@ import { CompanyService } from './company.service';
 @Module({
   imports: [PrismaModule],
   providers: [CompanyResolver, CompanyService],
-  exports: []
+  exports: [CompanyService]
 })
 export class CompanyModule {}

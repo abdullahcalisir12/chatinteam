@@ -12,7 +12,7 @@ export class CompanyService {
   async findOne(where: CompanyWhereUniqueInput): Promise<Company> {
     try {
       const company = await this.prisma.company.findOne({ where });
-      
+
       if (!company) throw new Error('Company Not found');
       return company;
     } catch (error) {
@@ -35,12 +35,12 @@ export class CompanyService {
           ...companyCreateData,
           User: {
             connect: {
-            id: user.id
+              id: user.id
             }
           }
         }
       });
-      if (!company) throw new Error('Error');
+      if (!company) throw new Error('Failed to create company');
       return company;
     } catch (error) {
       throw new Error(error);
@@ -52,13 +52,13 @@ export class CompanyService {
       const company = await this.findOne(where);
       if (company.owner.id === user.id) {
         const deletedCompany = await this.prisma.company.delete({ where });
-        if (!company) throw new Error('Error');
+        if (!deletedCompany) throw new Error('Failed to delete company');
         return { id: where.id };
       } else {
         throw new Error('Unauthorizated');
       }
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error);
     }
   }
 }

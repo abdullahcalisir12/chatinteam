@@ -14,7 +14,7 @@ export class Company {
   @Field(type => User, { nullable: true})
   owner?: User;
 
-  @Field(type => User, { nullable: true })
+  @Field(type => [User], { nullable: true })
   members?: User[];
 
   @Field(type => [Invitation], { nullable: true })
@@ -33,7 +33,10 @@ export class CompanyWhereUniqueInput {
 @InputType()
 export class CompanyWhereInput {
   @Field(type => Int, { nullable: true })
-  id: number;
+  id?: number;
+
+  @Field(type => Int, { nullable: true })
+  user_id?: number;
 }
 
 @InputType()
