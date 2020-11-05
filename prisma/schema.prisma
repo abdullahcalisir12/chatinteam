@@ -7,56 +7,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Companies {
-  id           Int            @id @default(autoincrement())
-  name         String
-  creatorId    Int
-  Users        Users          @relation(fields: [creatorId], references: [id])
-  CompanyUsers CompanyUsers[]
-  Invitations  Invitations[]
-  Teams        Teams[]
+model Company {
+  id            Int             @id @default(autoincrement())
+  name          String
+  owner_id      Int?
+  User          User?           @relation(fields: [owner_id], references: [id])
+  CompanyMember CompanyMember[]
+  Invitation    Invitation[]
+  Team          Team[]
 }
 
-model Users {
-  id           Int            @id @default(autoincrement())
-  password     String
-  email        String         @unique
-  Companies    Companies[]
-  CompanyUsers CompanyUsers[]
-  TeamUsers    TeamUsers[]
+model Team {
+  id         Int          @id @default(autoincrement())
+  name       String
+  company_id Int?
+  Company    Company?     @relation(fields: [company_id], references: [id])
+  TeamMember TeamMember[]
 }
 
-model Teams {
-  id        Int         @id @default(autoincrement())
-  name      String
-  companyId Int
-  Companies Companies   @relation(fields: [companyId], references: [id])
-  TeamUsers TeamUsers[]
+model User {
+  id            Int             @id @default(autoincrement())
+  password      String
+  email         String          @unique
+  Company       Company[]
+  CompanyMember CompanyMember[]
 }
 
-model Invitations {
-  status    String
-  email     String
-  companyId Int
-  Companies Companies @relation(fields: [companyId], references: [id])
+model CompanyMember {
+  id         Int          @unique @default(autoincrement())
+  user_id    Int
+  company_id Int
+  Company    Company      @relation(fields: [company_id], references: [id])
+  User       User         @relation(fields: [user_id], references: [id])
+  TeamMember TeamMember[]
 
-  @@unique([email, companyId], name: "Invitations_email_companyId_key")
+  @@id([id, user_id, company_id])
 }
 
-model TeamUsers {
-  userId Int
-  teamId Int
-  Teams  Teams @relation(fields: [teamId], references: [id])
-  Users  Users @relation(fields: [userId], references: [id])
+model Invitation {
+  status     String
+  email      String
+  company_id Int
+  Company    Company @relation(fields: [company_id], references: [id])
 
-  @@unique([userId, teamId], name: "TeamUsers_userId_teamId_key")
+  @@id([email, company_id])
 }
 
-model CompanyUsers {
-  userId    Int
-  companyId Int
-  Companies Companies @relation(fields: [companyId], references: [id])
-  Users     Users     @relation(fields: [userId], references: [id])
+model TeamMember {
+  team_id           Int
+  company_member_id Int
+  CompanyMember     CompanyMember @relation(fields: [company_member_id], references: [id])
+  Team              Team          @relation(fields: [team_id], references: [id])
 
-  @@unique([userId, companyId], name: "CompanyUsers_userId_companyId_key")
+  @@id([company_member_id, team_id])
 }

@@ -1,61 +1,54 @@
+-- Drop ALL TABLE 
+
+-- DROP TABLE IF EXISTS "Invitation", "Team", "Company", "User";
+DROP TABLE IF EXISTS "TeamMember", "CompanyMember", "Invitation", "Team", "Company", "User" RESTRICT;
+
 -- User --
-DROP TABLE IF EXISTS "Users";
-CREATE TABLE IF NOT EXISTS "Users" (
+
+CREATE TABLE IF NOT EXISTS "User" (
   id SERIAL PRIMARY KEY NOT NULL,
   password VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL
 );
 
--- Companies --
+-- Company --
 
-DROP TABLE IF EXISTS "Companies";
-CREATE TABLE IF NOT EXISTS "Companies" (
+CREATE TABLE IF NOT EXISTS "Company" (
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(255) NOT NULL,
-  "creatorId" INTEGER NOT NULL,
-  FOREIGN KEY ("creatorId") REFERENCES "Users" ("id")
+  owner_id INT references "User" (id)
 );
 
+-- Team --
 
--- Teams --
-
-DROP TABLE IF EXISTS "Teams";
-CREATE TABLE IF NOT EXISTS "Teams" (
+CREATE TABLE IF NOT EXISTS "Team" (
   id SERIAL PRIMARY KEY NOT NULL,
   name VARCHAR(255) NOT NULL,
-  "companyId" INTEGER NOT NULL,
-  CONSTRAINT company FOREIGN KEY ("companyId") REFERENCES "Companies" ("id")
+  company_id INT references "Company" (id)
 );
 
--- CompanyUsers --
+-- Invitation --
 
-DROP TABLE IF EXISTS "CompanyUsers";
-CREATE TABLE IF NOT EXISTS "CompanyUsers" (
-  "userId" INTEGER NOT NULL,
-  "companyId" INTEGER NOT NULL,
-  FOREIGN KEY ("userId")  REFERENCES "Users"("id"),
-  FOREIGN KEY ("companyId") REFERENCES "Companies"("id"),
-  UNIQUE("userId", "companyId")
-);
-
--- TeamUsers --
-
-DROP TABLE IF EXISTS "TeamUsers";
-CREATE TABLE IF NOT EXISTS "TeamUsers" (
-  "userId" INTEGER NOT NULL,
-  "teamId" INTEGER NOT NULL,
-  FOREIGN KEY ("userId")  REFERENCES "Users"("id"),
-  FOREIGN KEY ("teamId") REFERENCES "Teams"("id"),
-  UNIQUE("userId", "teamId")
-);
-
--- Invitations --
-
-DROP TABLE IF EXISTS "Invitations";
-CREATE TABLE IF NOT EXISTS "Invitations" (
+CREATE TABLE IF NOT EXISTS "Invitation" (
   status VARCHAR(255) NOT NULL,
-  "email" VARCHAR(255) NOT NULL,
-  "companyId" INTEGER NOT NULL,
-  FOREIGN KEY ("companyId") REFERENCES "Companies"("id"),
-  UNIQUE("email", "companyId")
+  email VARCHAR(255) NOT NULL,
+  company_id INT references "Company" (id),
+  CONSTRAINT invitation_id PRIMARY KEY (email, company_id)
+);
+
+-- Company Members - User can be a member of many companies and company can have multiple members
+
+CREATE TABLE IF NOT EXISTS "CompanyMember" (
+  id SERIAL NOT NULL UNIQUE,
+  user_id INT references "User" (id),
+  company_id INT references "Company" (id),
+  CONSTRAINT company_member_id PRIMARY KEY (id, user_id, company_id)
+);
+
+-- Team Members - User can be a member of many team and team can have multiple members
+
+CREATE TABLE IF NOT EXISTS "TeamMember" (
+  team_id INT references "Team" (id),
+  company_member_id INT references "CompanyMember" (id),
+  CONSTRAINT team_member_id PRIMARY KEY (company_member_id, team_id)
 );
