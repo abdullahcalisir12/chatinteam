@@ -11,6 +11,14 @@ export class InvitationResolver {
     return this.invitationService.findMany(invitationWhereUniqueInput);
   }
 
+  // async companyInvitations() {
+  //   return 'companyInvitations';
+  // }
+
+  // async userInvitations() {
+  //   return 'userInvitations';
+  // }
+
   @Mutation(returns => Invitation)
   async createInvitation(@Args('invitationCreateInput', { type: () => InvitationCreateInput }) invitationCreateInput): Promise<Invitation> {
     return this.invitationService.create(invitationCreateInput);
