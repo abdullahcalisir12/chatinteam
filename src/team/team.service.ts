@@ -9,15 +9,15 @@ export class TeamService {
     private prisma: PrismaService
   ) {}
   async findOne(where: TeamWhereUniqueInput): Promise<Team> {
-    return this.prisma.teams.findOne({ where });
+    return this.prisma.team.findOne({ where });
   }
 
   async create(teamCreateData: TeamCreateInput): Promise<Team> {
     const { companyId, ...teamData } = teamCreateData
-    return this.prisma.teams.create({
+    return this.prisma.team.create({
       data: {
         ...teamData,
-        Companies: {
+        Company: {
           connect: {
             id: companyId
           }
@@ -27,7 +27,7 @@ export class TeamService {
   }
 
   async delete(where: TeamWhereUniqueInput): Promise<DeleteResult> {
-    const team = await this.prisma.teams.delete({ where });
+    const team = await this.prisma.team.delete({ where });
     if (!team) throw new Error();
     return { id: where.id }
   }

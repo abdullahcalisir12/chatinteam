@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, InputType } from "@nestjs/graphql";
 import { Company } from "src/company/company.graphql";
+import { User } from "src/user/user.graphql";
 
 @ObjectType()
 export class Team {
@@ -10,7 +11,10 @@ export class Team {
   name: string;
 
   @Field(type => Int)
-  companyId: number;
+  company?: Company;
+
+  @Field(type => [User], { nullable: true })
+  users?: User[];
 }
 
 @InputType()
