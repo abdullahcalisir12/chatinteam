@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, InputType, registerEnumType } from "@nestjs/graphql";
+import { Field, Int, ObjectType, InputType } from "@nestjs/graphql";
 import { Company } from "src/company/company.graphql";
 
 @ObjectType()

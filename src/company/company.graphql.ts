@@ -31,15 +31,6 @@ export class CompanyWhereUniqueInput {
 }
 
 @InputType()
-export class CompanyWhereInput {
-  @Field(type => Int, { nullable: true })
-  id?: number;
-
-  @Field(type => Int, { nullable: true })
-  user_id?: number;
-}
-
-@InputType()
 export class CompanyCreateInput {
   @Field()
   name: string;

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeleteResult } from 'src/shared/shared.graphql';
 import { User } from 'src/user/user.graphql';
-import { Company, CompanyWhereUniqueInput, CompanyWhereInput, CompanyCreateInput } from './company.graphql';
+import { Company, CompanyWhereUniqueInput, CompanyCreateInput } from './company.graphql';
 
 @Injectable()
 export class CompanyService {
@@ -15,14 +15,6 @@ export class CompanyService {
 
       if (!company) throw new Error('Company Not found');
       return company;
-    } catch (error) {
-       throw new Error(error)
-    }
-  }
-
-  async findMany(where: CompanyWhereInput): Promise<Company[]> {
-    try {
-      return this.prisma.company.findMany({ where });
     } catch (error) {
        throw new Error(error)
     }
