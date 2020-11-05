@@ -2,7 +2,7 @@
 
 -- DROP TABLE IF EXISTS "Invitation", "Team", "Company", "User";
 -- DROP TABLE IF EXISTS "TeamMember", "CompanyMember", "Invitation", "Team", "Company", "User" RESTRICT;
-DROP TABLE IF EXISTS "TeamMember", "CompanyMember" RESTRICT;
+
 -- User --
 
 CREATE TABLE IF NOT EXISTS "User" (
