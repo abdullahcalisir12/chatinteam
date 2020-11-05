@@ -1,20 +1,16 @@
 import { Field, Int, ObjectType, InputType, registerEnumType } from "@nestjs/graphql";
-import { InvitationTypes } from "./invitation.enum";
-
-registerEnumType(InvitationTypes, {
-  name: 'InvitationTypes',
-});
+import { Company } from "src/company/company.graphql";
 
 @ObjectType()
 export class Invitation {
-  @Field(type => InvitationTypes)
-  status: InvitationTypes;
+  @Field()
+  status: string;
 
   @Field()
   email: string;
 
-  @Field(type => Int)
-  companyId: number;
+  @Field(type => Company)
+  company?: Company;
 }
 
 
@@ -38,6 +34,6 @@ export class InvitationCreateInput {
 
 @InputType()
 export class InvitationUpdateInput extends InvitationCreateInput {
-  @Field(type => InvitationTypes)
-  status: InvitationTypes;
+  @Field()
+  status: string;
 }

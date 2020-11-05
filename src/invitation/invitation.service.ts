@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Invitations } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { InvitationTypes } from './invitation.enum';
-import { InvitationCreateInput, InvitationUpdateInput, InvitationWhereUniqueInput } from './invitation.graphql';
+import { Invitation, InvitationCreateInput, InvitationUpdateInput, InvitationWhereUniqueInput } from './invitation.graphql';
 
 @Injectable()
 export class InvitationService {
@@ -10,16 +9,16 @@ export class InvitationService {
     private prisma: PrismaService
   ) { }
   
-  async findMany(where: InvitationWhereUniqueInput): Promise<Invitations[]> {
-    return this.prisma.invitations.findMany({ where, select: { email: true, companyId: true, status: true } });
+  async findMany(where: InvitationWhereUniqueInput): Promise<Invitation[]> {
+    return this.prisma.invitation.findMany({ where });
   }
 
-  async create(invitationCreateData: InvitationCreateInput): Promise<Invitations> {
-    return this.prisma.invitations.create({
+  async create(invitationCreateData: InvitationCreateInput): Promise<Invitation> {
+    return this.prisma.invitation.create({
       data: {
         email: invitationCreateData.email,
         status: String(InvitationTypes.SENT),
-        Companies: {
+        Company: {
           connect: {
             id: invitationCreateData.companyId
           }
@@ -28,9 +27,9 @@ export class InvitationService {
     })
   }
 
-  async update(invitationUpdateData: InvitationUpdateInput): Promise<Invitations>{
-    return this.prisma.invitations.update({
-      where: { Invitations_email_companyId_key: { email: invitationUpdateData.email, companyId: invitationUpdateData.companyId} },
+  async update(invitationUpdateData: InvitationUpdateInput): Promise<Invitation>{
+    return this.prisma.invitation.update({
+      where: { email_company_id: { email: invitationUpdateData.email, company_id: invitationUpdateData.companyId} },
       data: {
         status: String(invitationUpdateData.status)
       }
