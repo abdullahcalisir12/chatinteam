@@ -10,8 +10,8 @@ datasource db {
 model Company {
   id            Int             @id @default(autoincrement())
   name          String
-  owner_id      Int?
-  User          User?           @relation(fields: [owner_id], references: [id])
+  owner_id      Int
+  User          User            @relation(fields: [owner_id], references: [id])
   CompanyMember CompanyMember[]
   Invitation    Invitation[]
   Team          Team[]
@@ -20,8 +20,8 @@ model Company {
 model Team {
   id         Int          @id @default(autoincrement())
   name       String
-  company_id Int?
-  Company    Company?     @relation(fields: [company_id], references: [id])
+  company_id Int
+  Company    Company      @relation(fields: [company_id], references: [id])
   TeamMember TeamMember[]
 }
 

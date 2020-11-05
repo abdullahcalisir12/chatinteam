@@ -13,7 +13,7 @@ export class AuthService {
   ) { }
 
   findUserByEmail(email: string): Promise<Users> {
-    return this.prismaService.users.findOne({
+    return this.prismaService.user.findOne({
       where: { email },
     })
   }
