@@ -11,21 +11,27 @@ export class Company {
   @Field()
   name: string;
 
-  @Field(type => Int)
-  creatorId: number;
+  @Field(type => User, { nullable: true})
+  owner?: User;
 
-  @Field(type => [User], { nullable: true})
-  CompanyUsers?: User[];
+  @Field(type => User, { nullable: true })
+  members?: User[];
 
   @Field(type => [Invitation], { nullable: true })
-  Invitations?: Invitation[];
+  invitations?: Invitation[];
 
   @Field(type => [Team], { nullable: true })
-  Teams?: Team[];
+  teams?: Team[];
 }
 
 @InputType()
 export class CompanyWhereUniqueInput {
+  @Field(type => Int, { nullable: true })
+  id: number;
+}
+
+@InputType()
+export class CompanyWhereInput {
   @Field(type => Int, { nullable: true })
   id: number;
 }
