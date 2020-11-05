@@ -3,12 +3,12 @@
 # ------------------------------------------------------
 
 type Company {
-  CompanyUsers: [User!]
-  creatorId: Int!
   id: Int!
-  Invitations: [Invitation!]
+  invitations: [Invitation!]
+  members: User
   name: String!
-  Teams: [Team!]
+  owner: User
+  teams: [Team!]
 }
 
 input CompanyCreateInput {
@@ -24,9 +24,9 @@ type DeleteResult {
 }
 
 type Invitation {
-  companyId: Int!
+  company: Company!
   email: String!
-  status: InvitationTypes!
+  status: String!
 }
 
 input InvitationCreateInput {
@@ -34,17 +34,10 @@ input InvitationCreateInput {
   email: String!
 }
 
-enum InvitationTypes {
-  ACCEPTED
-  CANCELED
-  REJECTED
-  SENT
-}
-
 input InvitationUpdateInput {
   companyId: Int!
   email: String!
-  status: InvitationTypes!
+  status: String!
 }
 
 input InvitationWhereUniqueInput {
@@ -72,6 +65,7 @@ type Mutation {
 type Query {
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
   invitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
+  me: User!
   team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
 }
@@ -82,8 +76,9 @@ input RegisterInput {
 }
 
 type Team {
-  companyId: Int!
+  company: Company!
   id: Int!
+  members: [User!]
   name: String!
 }
 
@@ -103,6 +98,8 @@ type Token {
 type User {
   email: String!
   id: Int!
+  joinedCompanies: [Company!]
+  ownedCompanies: [Company!]
 }
 
 input UserWhereUniqueInput {
