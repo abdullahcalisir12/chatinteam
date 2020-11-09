@@ -20,6 +20,28 @@ export class CompanyService {
     }
   }
 
+  async findMany(user: User): Promise<Company[]> {
+    try {
+      const companies = await this.prisma.company.findMany({ where: {
+        OR: [
+          {
+            owner_id: user.id
+          },
+          {
+            User: {
+              id: user.id
+            }
+          }
+        ]
+      }});
+
+      if (!companies) throw new Error('Company Not found');
+      return companies;
+    } catch (error) {
+       throw new Error(error)
+    }
+  }
+
   async create(companyCreateData: CompanyCreateInput, user: User): Promise<Company> {
     try {
       const company = await this.prisma.company.create({
@@ -42,7 +64,8 @@ export class CompanyService {
   async delete(where: CompanyWhereUniqueInput, user: User): Promise<DeleteResult> {
     try {
       const company = await this.findOne(where);
-      if (company.owner.id === user.id) {
+      console.log(company);
+      if (company && company.owner_id === user.id) {
         const deletedCompany = await this.prisma.company.delete({ where });
         if (!deletedCompany) throw new Error('Failed to delete company');
         return { id: where.id };

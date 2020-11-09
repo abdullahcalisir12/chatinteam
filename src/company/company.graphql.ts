@@ -22,6 +22,7 @@ export class Company {
 
   @Field(type => [Team], { nullable: true })
   teams?: Team[];
+  owner_id: number;
 }
 
 @InputType()

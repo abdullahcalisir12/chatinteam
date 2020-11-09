@@ -65,6 +65,7 @@ type Mutation {
 }
 
 type Query {
+  companies: [Company!]!
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
   companyInvitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
   me: User!

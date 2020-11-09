@@ -28,6 +28,13 @@ export class CompanyResolver {
     return this.companyService.findOne(companyWhereUniqueInput);
   }
 
+  @Query(returns => [Company])
+  async companies(
+    @CurrentUser() currentUser
+  ): Promise<Company[]> {
+    return this.companyService.findMany(currentUser);
+  }
+
   @Mutation(returns => Company)
   async createCompany(
     @CurrentUser() currentUser,
