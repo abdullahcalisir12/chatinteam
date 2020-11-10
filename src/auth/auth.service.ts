@@ -12,6 +12,7 @@ export class AuthService {
     private prismaService: PrismaService
   ) { }
 
+  // timeout error check
   findUserByEmail(email: string): Promise<User> {
     return this.prismaService.user.findOne({
       where: { email },

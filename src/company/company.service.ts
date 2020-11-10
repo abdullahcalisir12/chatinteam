@@ -9,11 +9,12 @@ export class CompanyService {
   constructor(
     private prisma: PrismaService
   ) {}
-  async findOne(where: CompanyWhereUniqueInput): Promise<Company> {
+  async findOne(where: CompanyWhereUniqueInput, user: User): Promise<Company> {
     try {
       const company = await this.prisma.company.findOne({ where });
 
       if (!company) throw new Error('Company Not found');
+      if (company && company.owner_id !== user.id) throw new Error('Validation Error');
       return company;
     } catch (error) {
        throw new Error(error)
@@ -25,16 +26,17 @@ export class CompanyService {
       const companies = await this.prisma.company.findMany({ where: {
         OR: [
           {
-            owner_id: user.id
+            owner_id: user.id,
           },
           {
-            User: {
-              id: user.id
+            CompanyMember: {
+              some: {
+                user_id: user.id
+              }
             }
           }
         ]
       }});
-
       if (!companies) throw new Error('Company Not found');
       return companies;
     } catch (error) {
@@ -51,6 +53,15 @@ export class CompanyService {
             connect: {
               id: user.id
             }
+          },
+          CompanyMember: {
+            create: {
+              User: {
+                connect: {
+                  id: user.id
+                }
+              }
+            }
           }
         }
       });
@@ -63,14 +74,11 @@ export class CompanyService {
 
   async delete(where: CompanyWhereUniqueInput, user: User): Promise<DeleteResult> {
     try {
-      const company = await this.findOne(where);
-      console.log(company);
+      const company = await this.findOne(where, user);
       if (company && company.owner_id === user.id) {
         const deletedCompany = await this.prisma.company.delete({ where });
         if (!deletedCompany) throw new Error('Failed to delete company');
         return { id: where.id };
-      } else {
-        throw new Error('Unauthorizated');
       }
     } catch (error) {
       throw new Error(error);

@@ -7,8 +7,10 @@ import { Team, TeamCreateInput, TeamWhereUniqueInput } from './team.graphql';
 import { TeamService } from './team.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/user/user.graphql';
+import { CurrentUser } from 'src/auth/currentUser.decorator';
 
 @Resolver(of => Team)
+@UseGuards(JwtAuthGuard)
 export class TeamResolver {
   constructor(
     private teamService: TeamService,
@@ -16,19 +18,19 @@ export class TeamResolver {
   ) { }
   
   @Query(returns => Team)  
-  @UseGuards(JwtAuthGuard)
   async team(@Args('teamWhereUniqueInput', { type: () => TeamWhereUniqueInput }) teamWhereUniqueInput): Promise<Team> {
     return this.teamService.findOne(teamWhereUniqueInput);
   }
 
-  @Mutation(returns => Team)  
-  @UseGuards(JwtAuthGuard)
-  async createTeam(@Args('teamCreateInput', { type: () => TeamCreateInput }) teamCreateInput): Promise<Team> {
-    return this.teamService.create(teamCreateInput);
+  @Mutation(returns => Team)
+  async createTeam(
+    @CurrentUser() currentUser,
+    @Args('teamCreateInput', { type: () => TeamCreateInput }) teamCreateInput
+  ): Promise<Team> {
+    return this.teamService.create(teamCreateInput, currentUser);
   }
 
   @Mutation(returns => DeleteResult)
-  @UseGuards(JwtAuthGuard)
   async deleteTeam(@Args('teamWhereUniqueInput', { type: () => TeamWhereUniqueInput }) teamWhereUniqueInput): Promise<DeleteResult> {
     return this.teamService.delete(teamWhereUniqueInput);
   }

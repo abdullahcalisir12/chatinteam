@@ -25,7 +25,7 @@ export class CompanyResolver {
     @CurrentUser() currentUser,
     @Args('companyWhereUniqueInput', { type: () => CompanyWhereUniqueInput }) companyWhereUniqueInput
   ): Promise<Company> {
-    return this.companyService.findOne(companyWhereUniqueInput);
+    return this.companyService.findOne(companyWhereUniqueInput, currentUser);
   }
 
   @Query(returns => [Company])
@@ -58,9 +58,9 @@ export class CompanyResolver {
   }
 
   @ResolveField('teams', returns => [Team])
-  async teams(@Parent() company: Company) {
+  async teams(@Parent() company: Company, @CurrentUser() user) {
     const { id } = company;
-    const teams = await this.prismaService.team.findMany({ where: { company_id: id } });
+    const teams = await this.prismaService.team.findMany({ where: { company_id: id, TeamMember: { some: { user_id: user.id } } } });
     return teams;
   }
 
