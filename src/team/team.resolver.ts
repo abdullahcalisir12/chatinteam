@@ -45,7 +45,6 @@ export class TeamResolver {
   async members(@Parent() team: Team) {
     const { id } = team;
     const teamMembers = await this.prismaService.teamMember.findMany({ where: { team_id: id }, select: { User: true } });
-    console.log(teamMembers);
     return teamMembers.map(member => member.User);
   }
 }

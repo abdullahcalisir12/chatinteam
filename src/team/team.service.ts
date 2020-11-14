@@ -33,8 +33,16 @@ export class TeamService {
   }
 
   async delete(where: TeamWhereUniqueInput): Promise<DeleteResult> {
-    const team = await this.prisma.team.delete({ where });
-    if (!team) throw new Error();
-    return { id: where.id }
+    try {
+      const team = await this.findOne(where);
+      if (team) {
+        await this.prisma.teamMember.deleteMany({ where: { team_id: team.id }});
+        const deletedTeam = await this.prisma.team.delete({ where });
+        if (!deletedTeam) throw new Error('Failed to delete team');
+        return { id: where.id };
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
