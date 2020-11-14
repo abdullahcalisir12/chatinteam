@@ -53,8 +53,8 @@ export class CompanyResolver {
 
   @ResolveField('owner', returns => User)
   async owner(@Parent() company: Company) {
-    const { id } = company;
-    return this.prismaService.user.findOne({ where: { id }});
+    const { owner_id } = company;
+    return this.prismaService.user.findOne({ where: { id: owner_id }});
   }
 
   @ResolveField('teams', returns => [Team])

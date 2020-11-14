@@ -97,6 +97,7 @@ input TeamWhereUniqueInput {
 
 type Token {
   access_token: String!
+  user: User!
 }
 
 type UpdateInvitation {

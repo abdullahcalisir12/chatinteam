@@ -76,6 +76,7 @@ export class CompanyService {
     try {
       const company = await this.findOne(where, user);
       if (company && company.owner_id === user.id) {
+        await this.prisma.companyMember.deleteMany({ where: { company_id: company.id }});
         const deletedCompany = await this.prisma.company.delete({ where });
         if (!deletedCompany) throw new Error('Failed to delete company');
         return { id: where.id };

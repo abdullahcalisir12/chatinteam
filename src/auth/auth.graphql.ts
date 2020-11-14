@@ -1,9 +1,13 @@
 import { Field, ObjectType, InputType } from "@nestjs/graphql";
+import { User } from "src/user/user.graphql";
 
 @ObjectType()
 export class Token {
   @Field()
   access_token?: string;
+
+  @Field(type => User)
+  user: User;
 }
 
 @InputType()
