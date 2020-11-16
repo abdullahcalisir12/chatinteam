@@ -4,6 +4,7 @@ import { CurrentUser } from 'src/auth/currentUser.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Company } from 'src/company/company.graphql';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SuccessResult } from 'src/shared/shared.graphql';
 import { Invitation, UpdateInvitation, InvitationCreateInput, InvitationUpdateInput, InvitationWhereUniqueInput } from './invitation.graphql';
 import { InvitationService } from './invitation.service';
 
@@ -21,8 +22,8 @@ export class InvitationResolver {
   }
 
   @Query(returns => [Invitation])
-  async userInvitations(@Args('invitationWhereUniqueInput', { type: () => InvitationWhereUniqueInput }) invitationWhereUniqueInput): Promise<Invitation[]> {
-    return this.invitationService.findMany({ email: invitationWhereUniqueInput.email });
+  async waitingInvitations(@CurrentUser() user): Promise<Invitation[]> {
+    return this.invitationService.waitingInvitations(user);
   }
 
   @Mutation(returns => Invitation)
@@ -30,27 +31,26 @@ export class InvitationResolver {
     return this.invitationService.create(invitationCreateInput);
   }
 
-  @Mutation(returns => UpdateInvitation)
+  @Mutation(returns => SuccessResult)
   async cancelInvitation(
-    @CurrentUser() currentUser,
     @Args('invitationUpdateInput', { type: () => InvitationUpdateInput }) invitationUpdateInput
-  ): Promise<Invitation> {
-    return this.invitationService.cancel(invitationUpdateInput, currentUser);
+  ): Promise<SuccessResult> {
+    return this.invitationService.cancel(invitationUpdateInput);
   }
 
-  @Mutation(returns => UpdateInvitation)
+  @Mutation(returns => SuccessResult)
   async acceptInvitation(
     @CurrentUser() currentUser,
     @Args('invitationUpdateInput', { type: () => InvitationUpdateInput }) invitationUpdateInput
-  ): Promise<Invitation> {
+  ): Promise<SuccessResult> {
     return this.invitationService.accept(invitationUpdateInput, currentUser);
   }
 
-  @Mutation(returns => UpdateInvitation)
+  @Mutation(returns => SuccessResult)
   async rejectInvitation(
     @CurrentUser() currentUser,
     @Args('invitationUpdateInput', { type: () => InvitationUpdateInput }) invitationUpdateInput
-  ): Promise<Invitation> {
+  ): Promise<SuccessResult> {
     return this.invitationService.reject(invitationUpdateInput, currentUser);
   }
 

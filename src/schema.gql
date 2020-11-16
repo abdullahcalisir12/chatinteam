@@ -36,8 +36,8 @@ input InvitationCreateInput {
 }
 
 input InvitationUpdateInput {
-  company_id: Int!
-  email: String!
+  company_id: Int
+  email: String
 }
 
 input InvitationWhereUniqueInput {
@@ -51,8 +51,8 @@ input LoginInput {
 }
 
 type Mutation {
-  acceptInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
-  cancelInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
+  acceptInvitation(invitationUpdateInput: InvitationUpdateInput!): SuccessResult!
+  cancelInvitation(invitationUpdateInput: InvitationUpdateInput!): SuccessResult!
   createCompany(companyCreateInput: CompanyCreateInput!): Company!
   createInvitation(invitationCreateInput: InvitationCreateInput!): Invitation!
   createTeam(teamCreateInput: TeamCreateInput!): Team!
@@ -61,7 +61,7 @@ type Mutation {
   deleteUser(userWhereUniqueInput: UserWhereUniqueInput!): User!
   login(loginInput: LoginInput!): Token!
   register(registerInput: RegisterInput!): Token!
-  rejectInvitation(invitationUpdateInput: InvitationUpdateInput!): UpdateInvitation!
+  rejectInvitation(invitationUpdateInput: InvitationUpdateInput!): SuccessResult!
 }
 
 type Query {
@@ -71,12 +71,16 @@ type Query {
   me: User!
   team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!
-  userInvitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
+  waitingInvitations: [Invitation!]!
 }
 
 input RegisterInput {
   email: String!
   password: String!
+}
+
+type SuccessResult {
+  success: Int!
 }
 
 type Team {
@@ -100,16 +104,9 @@ type Token {
   user: User!
 }
 
-type UpdateInvitation {
-  email: String!
-  status: String!
-}
-
 type User {
   email: String!
   id: Int!
-  joinedCompanies: [Company!]
-  ownedCompanies: [Company!]
 }
 
 input UserWhereUniqueInput {

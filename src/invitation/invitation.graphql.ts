@@ -44,4 +44,10 @@ export class InvitationCreateInput {
 }
 
 @InputType()
-export class InvitationUpdateInput extends InvitationCreateInput {}
+export class InvitationUpdateInput {
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field(type => Int, { nullable: true })
+  company_id?: number;
+}
