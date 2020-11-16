@@ -7,6 +7,7 @@ import { CompanyModule } from './company/company.module';
 import { UserModule } from './user/user.module';
 import { InvitationModule } from './invitation/invitation.module';
 import { TeamModule } from './team/team.module';
+import { CompanyMembersModule } from './company-members/company-members.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TeamModule } from './team/team.module';
     AuthModule,
     InvitationModule,
     TeamModule,
+    CompanyMembersModule,
   ],
   controllers: [],
   providers: [],

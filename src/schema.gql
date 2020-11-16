@@ -68,6 +68,7 @@ type Query {
   companies: [Company!]!
   company(companyWhereUniqueInput: CompanyWhereUniqueInput!): Company!
   companyInvitations(invitationWhereUniqueInput: InvitationWhereUniqueInput!): [Invitation!]!
+  companyMembers(companyId: Int!): [User!]!
   me: User!
   team(teamWhereUniqueInput: TeamWhereUniqueInput!): Team!
   user(userWhereUniqueInput: UserWhereUniqueInput!): User!

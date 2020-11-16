@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { CompanyService } from './company.service';
 
 import { Company, CompanyWhereUniqueInput, CompanyCreateInput } from './company.graphql';
@@ -17,7 +17,7 @@ import { Invitation } from 'src/invitation/invitation.graphql';
 export class CompanyResolver {
   constructor(
     private companyService: CompanyService,
-    private prismaService: PrismaService
+    private prisma: PrismaService
   ) { }
 
   @Query(returns => Company)
@@ -54,20 +54,20 @@ export class CompanyResolver {
   @ResolveField('owner', returns => User)
   async owner(@Parent() company: Company) {
     const { owner_id } = company;
-    return this.prismaService.user.findOne({ where: { id: owner_id }});
+    return this.prisma.user.findOne({ where: { id: owner_id }});
   }
 
   @ResolveField('teams', returns => [Team])
   async teams(@Parent() company: Company, @CurrentUser() user) {
     const { id } = company;
-    const teams = await this.prismaService.team.findMany({ where: { company_id: id, TeamMember: { some: { user_id: user.id } } } });
+    const teams = await this.prisma.team.findMany({ where: { company_id: id, TeamMember: { some: { user_id: user.id } } } });
     return teams;
   }
 
   @ResolveField('members', returns => [User])
   async members(@Parent() company: Company) {
     const { id } = company;
-    const companyMembers = await this.prismaService.companyMember.findMany({ where: { company_id: id }, select: { User: true } });
+    const companyMembers = await this.prisma.companyMember.findMany({ where: { company_id: id }, select: { User: true } });
 
     return companyMembers.map(member => member.User);
   }
@@ -75,6 +75,6 @@ export class CompanyResolver {
   @ResolveField('invitations', returns => [Invitation])
   async invitations(@Parent() company: Company) {
     const { id } = company;
-    return this.prismaService.invitation.findMany({ where: { company_id: id }});
+    return this.prisma.invitation.findMany({ where: { company_id: id }});
   }
 }
